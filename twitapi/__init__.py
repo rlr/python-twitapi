@@ -457,7 +457,7 @@ class Client(object):
         return self.request(self.base_api_url+'/friendships/exists.json?%s' %
                             urlencode(params), "GET")
 
-__all__ = ["OAuth", "BasicAuthentication", "Client"]
+__all__ = ["OAuth", "BasicAuth", "Client"]
 
 
 
