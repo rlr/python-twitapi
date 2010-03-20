@@ -25,6 +25,7 @@ THE SOFTWARE.
 import httplib2
 import oauth2
 from urllib import urlencode
+from datetime import date as datetype
 
 try:
     from urlparse import parse_qs, parse_qsl
@@ -45,8 +46,8 @@ class NoAuth(object):
     """
     No Authentitcation
     """
-    def make_request(self, url, method="GET", body=None, cache=None,
-                      timeout=None, proxy_info=None):
+    def make_request(self, url, method="GET", body=None, headers=None,
+                     cache=None, timeout=None, proxy_info=None):
         """
         Make a request using no authentication.
         """
@@ -69,8 +70,8 @@ class BasicAuth(object):
         self.username = username
         self.password = password
     
-    def make_request(self, url, method="GET", body=None, cache=None,
-                      timeout=None, proxy_info=None):
+    def make_request(self, url, method="GET", body=None, headers=None,
+                     cache=None, timeout=None, proxy_info=None):
         """
         Make a request using Basic Authentication using the username
         and passowor provided.
@@ -170,8 +171,8 @@ class OAuth(object):
         """
         self.token = token
 
-    def make_request(self, url, method="GET", body=None, cache=None,
-                      timeout=None, proxy_info=None):
+    def make_request(self, url, method="GET", body=None, headers=None,
+                     cache=None, timeout=None, proxy_info=None):
         """
         Make a request using OAuth authentication with the consumer key and
         secret and the provided token.
@@ -218,12 +219,140 @@ class Client(object):
         self.timeout = timeout
         self.proxy_info = proxy_info
     
-    def request(self, url, method="GET", body=None):
+    def request(self, url, method="GET", body=None, headers=None):
         """
         Make a request with the provided authentication.
         """
-        return self.auth.make_request(url, method, body,
+        if headers is None:
+            headers = DEFAULT_HTTP_HEADERS.copy()
+        
+        return self.auth.make_request(url, method, body, headers,
                                  self.cache, self.timeout, self.proxy_info)
+    
+    def search(self, q, **kwargs):
+        """
+        Returns tweets that match a specified query.
+        
+        See the Twitter Search API documentation for all the parameters:
+        http://apiwiki.twitter.com/Twitter-Search-API-Method:-search
+        
+        Example::
+
+            # create the client (authentication not required for search)
+            twitter = Client()
+            
+            # search for beer
+            search_results = twitter.search('beer')
+          
+        """
+        params = kwargs
+        if q:
+            params['q'] = q
+        
+        return self.request(self.base_search_url+'/search.json?%s' %
+                             urlencode(params), "GET")
+    
+    def trends(self):
+        """
+        Returns the top ten topics that are currently trending on Twitter.
+        The response includes the time of the request, the name of each
+        trend, and the url to the Twitter Search results page for that topic.
+        
+        Example::
+
+            # create the client (authentication not required for trends)
+            twitter = Client()
+            
+            # get the trending topics
+            trending = twitter.trends()
+          
+        """
+        return self.request(self.base_search_url+'/trends.json', "GET")
+    
+    def trends_current(self, exclude=None):
+        """
+        Returns the current top 10 trending topics on Twitter. The response 
+        ncludes the time of the request, the name of each trending topic,
+        and query used on Twitter Search results page for that topic.
+        
+        Setting exclude parameter to 'hashtags' will remove all hashtags
+        from the trends list.
+        
+        Example::
+
+            # create the client (authentication not required for trends)
+            twitter = Client()
+            
+            # get the current trending topics, no hashtags
+            trending = twitter.trends_current(exclude='hashtags')
+          
+        """
+        params = {}
+        if exclude:
+            params['exclude'] = exclude
+            
+        return self.request(self.base_search_url+'/trends/current.json?%s' %
+                             urlencode(params), "GET")
+    
+    def trends_daily(self, date=None, exclude=None):
+        """
+        Returns the top 20 trending topics for each hour in a given day.
+        
+        Setting exclude parameter to 'hashtags' will remove all hashtags
+        from the trends list.
+        
+        Example::
+
+            # create the client (authentication not required for trends)
+            twitter = Client()
+            
+            # get the today's trending topics
+            from datetime import date
+            trending = twitter.trends_daily(date=date.today())
+          
+        """
+        params = {}
+        if date:
+            if isinstance(date, datetype):
+                params['date'] = date.strftime('%Y-%m-%d')
+            else:
+                params['date'] = date
+        if exclude:
+            params['exclude'] = exclude
+            
+        return self.request(self.base_search_url+'/trends/daily.json?%s' %
+                             urlencode(params), "GET")
+    
+    def trends_weekly(self, date=None, exclude=None):
+        """
+        Returns the top 30 trending topics for each day in a given week.
+        
+        date parameter specifies a start date for the report.
+
+        
+        Setting exclude parameter to 'hashtags' will remove all hashtags
+        from the trends list.
+        
+        Example::
+
+            # create the client (authentication not required for trends)
+            twitter = Client()
+            
+            # get the trending topics for a week
+            trending = twitter.trends_weekly()
+          
+        """
+        params = {}
+        if date:
+            if isinstance(date, datetype):
+                params['date'] = date.strftime('%Y-%m-%d')
+            else:
+                params['date'] = date
+        if exclude:
+            params['exclude'] = exclude
+            
+        return self.request(self.base_search_url+'/trends/weekly.json?%s' %
+                             urlencode(params), "GET")
     
     def statuses_update(self, status, in_reply_to_status_id=None):
         """
@@ -264,7 +393,7 @@ class Client(object):
 
     
 
-
+__all__ = ["OAuth", "BasicAuthentication", "Client"]
 
 
 
