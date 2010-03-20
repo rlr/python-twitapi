@@ -389,9 +389,73 @@ class Client(object):
         else:
             params['screen_name'] = screen_name
         
-        return self.request(self.base_api_url+'/users/show.json?%s' % urlencode(params), "GET")
-
+        return self.request(self.base_api_url+'/users/show.json?%s' %
+                            urlencode(params), "GET")
     
+    def friendships_create(self, user_id=None, screen_name=None, follow=False):
+        """
+        Allows the authenticating users to follow the user specified in
+        the ID parameter.  Returns the befriended user in the requested
+        format when successful.  Returns a string describing the failure
+        condition when unsuccessful. If you are already friends with the
+        user an HTTP 403 will be returned.
+        
+        Setting follow to True enables notifications for the target user
+        in addition to becoming friends.
+        """
+        if not user_id and not screen_name:
+            raise Exception("A user_id or screen_name must be provided.")
+        
+        if user_id and screen_name:
+            raise Exception("A user_id OR screen_name must be provided.")
+        
+        params = {}
+        if user_id:
+            params['user_id'] = user_id
+        else:
+            params['screen_name'] = screen_name
+        if follow:
+            params['follow'] = 'true'
+        
+        return self.request(self.base_api_url+'/friendships/create.json',
+                            "POST", urlencode(params))
+
+    def friendships_destroy(self, user_id=None, screen_name=None):
+        """
+        Allows the authenticating users to unfollow the user specified in
+        the ID parameter. Returns the unfollowed user in the requested
+        format when successful. Returns a string describing the failure
+        condition when unsuccessful.
+        """
+        if not user_id and not screen_name:
+            raise Exception("A user_id or screen_name must be provided.")
+        
+        if user_id and screen_name:
+            raise Exception("A user_id OR screen_name must be provided.")
+        
+        params = {}
+        if user_id:
+            params['user_id'] = user_id
+        else:
+            params['screen_name'] = screen_name
+        
+        return self.request(self.base_api_url+'/friendships/destroy.json',
+                            "POST", urlencode(params))
+    
+    def friendships_exists(self, user_a, user_b):
+        """
+        Tests for the existance of friendship between two users.
+        Will return true if user_a follows user_b, otherwise will return false.
+        
+        user_a and user_b can be the user_id or screen_name of the users.
+        """
+        params = {
+                  'user_a': user_a,
+                  'user_b': user_b
+                  }
+        
+        return self.request(self.base_api_url+'/friendships/exists.json?%s' %
+                            urlencode(params), "GET")
 
 __all__ = ["OAuth", "BasicAuthentication", "Client"]
 
