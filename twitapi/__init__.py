@@ -242,7 +242,7 @@ class Client(object):
             twitter = Client()
             
             # search for beer
-            search_results = twitter.search('beer')
+            resp, search_results = twitter.search('beer')
           
         """
         params = kwargs
@@ -264,7 +264,7 @@ class Client(object):
             twitter = Client()
             
             # get the trending topics
-            trending = twitter.trends()
+            resp, trending = twitter.trends()
           
         """
         return self.request(self.base_search_url+'/trends.json', "GET")
@@ -284,7 +284,7 @@ class Client(object):
             twitter = Client()
             
             # get the current trending topics, no hashtags
-            trending = twitter.trends_current(exclude='hashtags')
+            resp, trending = twitter.trends_current(exclude='hashtags')
           
         """
         params = {}
@@ -308,7 +308,7 @@ class Client(object):
             
             # get the today's trending topics
             from datetime import date
-            trending = twitter.trends_daily(date=date.today())
+            resp, trending = twitter.trends_daily(date=date.today())
           
         """
         params = {}
@@ -339,7 +339,7 @@ class Client(object):
             twitter = Client()
             
             # get the trending topics for a week
-            trending = twitter.trends_weekly()
+            resp, trending = twitter.trends_weekly()
           
         """
         params = {}
