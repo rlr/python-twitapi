@@ -26,7 +26,10 @@ import httplib2
 import oauth2
 from urllib import urlencode
 from datetime import date as datetype
-
+try:
+    import json # python 2.6
+except ImportError:
+    import simplejson as json # python 2.4 to 2.5
 try:
     from urlparse import parse_qs, parse_qsl
 except ImportError:
@@ -222,12 +225,25 @@ class Client(object):
     def request(self, url, method="GET", body=None, headers=None):
         """
         Make a request with the provided authentication.
+        
+        The response is assumed to be json and is parsed to a dict that is
+        returned along with the response headers. If an exception is caught while
+        decoding the json, then the raw response body is returned (should only happen
+        if status != '200').
+        NOTE: Feels ugly.. Should I be doing this in a different way?
         """
         if headers is None:
             headers = DEFAULT_HTTP_HEADERS.copy()
         
-        return self.auth.make_request(url, method, body, headers,
+        resp, content = self.auth.make_request(url, method, body, headers,
                                  self.cache, self.timeout, self.proxy_info)
+        try:
+        	decoded = json.loads(content)
+        	content = decoded
+        except json.decoder.JSONDecodeError:
+            pass
+            
+        return resp, content
     
     def search(self, q, **kwargs):
         """
