@@ -15,12 +15,10 @@ Fill me in...
 
 Dependencies
 ============
-- `httplib2 <http://code.google.com/p/httplib2/>`
-  (``pip install httplib2``)
-- `python-oauth2 <http://github.com/simplegeo/python-oauth2>`
-  (``pip install oauth2``)
-- `simplejson <http://code.google.com/p/simplejson/>`
-  (``pip install simplejson``) not required for python 2.6+
+- `httplib2 <http://code.google.com/p/httplib2/>` (``pip install httplib2``)
+- `python-oauth2 <http://github.com/simplegeo/python-oauth2>` (``pip install oauth2``)
+- `simplejson <http://code.google.com/p/simplejson/>` (``pip install simplejson``)
+   not required for python 2.6+
 
 Examples
 ========
@@ -65,7 +63,7 @@ Add a friend - OAuth::
     >>> access_token = auth.get_access_token()
     
     # We usually will want to save this access token in our data store for
-    # use.
+    # later use.
     
     # Now we can call the Twitter API on behalf of the user!
     >>> auth.set_token(access_token)
