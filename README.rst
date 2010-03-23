@@ -15,10 +15,14 @@ Fill me in...
 
 Dependencies
 ============
-- `httplib2 <http://code.google.com/p/httplib2/>` (``pip install httplib2``)
-- `python-oauth2 <http://github.com/simplegeo/python-oauth2>` (``pip install oauth2``)
-- `simplejson <http://code.google.com/p/simplejson/>` (``pip install simplejson``)
-   not required for python 2.6+
+`httplib2 <http://code.google.com/p/httplib2/>`
+``pip install httplib2``
+
+`python-oauth2 <http://github.com/simplegeo/python-oauth2>`
+``pip install oauth2``
+
+`simplejson <http://code.google.com/p/simplejson/>`  not required for python 2.6+
+``pip install simplejson``
 
 Examples
 ========
