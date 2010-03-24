@@ -209,7 +209,7 @@ class Client(object):
     timeout = None
     proxy_info = None
     
-    def __init__(self, auth=None, base_api_url="http://twitter.com",
+    def __init__(self, auth=None, base_api_url="http://api.twitter.com/1",
                  base_search_url="http://search.twitter.com", cache=None,
                  timeout=None, proxy_info=None):
         if not auth:
@@ -244,6 +244,10 @@ class Client(object):
             pass
             
         return resp, content
+    
+    #####################
+    # Search API Methods
+    #####################
     
     def search(self, q, **kwargs):
         """
@@ -303,9 +307,7 @@ class Client(object):
             resp, trending = twitter.trends_current(exclude='hashtags')
           
         """
-        params = {}
-        if exclude:
-            params['exclude'] = exclude
+        params = get_params_dict(exclude=exclude)
             
         return self.request(self.base_search_url+'/trends/current.json?%s' %
                              urlencode(params), "GET")
@@ -327,14 +329,9 @@ class Client(object):
             resp, trending = twitter.trends_daily(date=date.today())
           
         """
-        params = {}
-        if date:
-            if isinstance(date, datetype):
-                params['date'] = date.strftime('%Y-%m-%d')
-            else:
-                params['date'] = date
-        if exclude:
-            params['exclude'] = exclude
+        if isinstance(date, datetype):
+            date = date.strftime('%Y-%m-%d')
+        params = get_params_dict(date=date, exclude=exclude)
             
         return self.request(self.base_search_url+'/trends/daily.json?%s' %
                              urlencode(params), "GET")
@@ -344,7 +341,6 @@ class Client(object):
         Returns the top 30 trending topics for each day in a given week.
         
         date parameter specifies a start date for the report.
-
         
         Setting exclude parameter to 'hashtags' will remove all hashtags
         from the trends list.
@@ -358,17 +354,108 @@ class Client(object):
             resp, trending = twitter.trends_weekly()
           
         """
-        params = {}
-        if date:
-            if isinstance(date, datetype):
-                params['date'] = date.strftime('%Y-%m-%d')
-            else:
-                params['date'] = date
-        if exclude:
-            params['exclude'] = exclude
+        if isinstance(date, datetype):
+            date = date.strftime('%Y-%m-%d')
+        params = get_params_dict(date=date, exclude=exclude)
             
         return self.request(self.base_search_url+'/trends/weekly.json?%s' %
                              urlencode(params), "GET")
+    
+    ###################
+    # Timeline Methods
+    ###################
+    
+    def statuses_home_timeline(self, since_id=None, max_id=None, count=None,
+                               page=None):
+        """
+        Returns the most recent statuses, including retweets, posted by the
+        authenticating user and that user's friends.
+        """
+        params = get_params_dict(since_id=since_id, max_id=max_id,
+                                 count=count, page=page)
+        
+        return self.request(self.base_api_url+
+                '/statuses/home_timeline.json?%s' % urlencode(params), "GET")
+    
+    def statuses_friends_timeline(self, since_id=None, max_id=None, count=None,
+                               page=None):
+        """
+        Returns the most recent statuses posted by the authenticating user and
+        that user's friends.
+        
+        Note: Retweets will not appear in the friends_timeline for backwards
+        compatibility. If you want retweets included use home_timeline.
+        """
+        params = get_params_dict(since_id=since_id, max_id=max_id,
+                                 count=count, page=page)
+        
+        return self.request(self.base_api_url+
+                '/statuses/friends_timeline.json?%s' % urlencode(params),
+                "GET")
+    
+    def statuses_user_timeline(self, user_id=None, screen_name=None,
+                        since_id=None, max_id=None, count=None, page=None):
+        """
+        Returns the most recent statuses posted from the authenticating user.
+        It's also possible to request another user's timeline via the user_id
+        or screen_name parameter.
+        """
+        params = get_params_dict(user_id=user_id, screen_name=screen_name,
+                    since_id=since_id, max_id=max_id, count=count, page=page)
+        
+        return self.request(self.base_api_url+
+                '/statuses/user_timeline.json?%s' % urlencode(params), "GET")
+    
+    def statuses_mentions(self, since_id=None, max_id=None, count=None,
+                               page=None):
+        """
+        Returns the most recent mentions (status containing @username) for
+        the authenticating user.
+        """
+        params = get_params_dict(since_id=since_id, max_id=max_id,
+                                 count=count, page=page)
+        
+        return self.request(self.base_api_url+
+                '/statuses/mentions.json?%s' % urlencode(params), "GET")
+    
+    def statuses_retweeted_by_me(self, since_id=None, max_id=None, count=None,
+                               page=None):
+        """
+        Returns the most recent retweets posted by the authenticating user.
+        """
+        params = get_params_dict(since_id=since_id, max_id=max_id,
+                                 count=count, page=page)
+        
+        return self.request(self.base_api_url+
+                '/statuses/retweeted_by_me.json?%s' % urlencode(params), "GET")
+    
+    def statuses_retweeted_to_me(self, since_id=None, max_id=None, count=None,
+                               page=None):
+        """
+        Returns the most recent retweets posted by the authenticating user's
+        friends.
+        """
+        params = get_params_dict(since_id=since_id, max_id=max_id,
+                                 count=count, page=page)
+        
+        return self.request(self.base_api_url+
+                '/statuses/retweeted_to_me.json?%s' % urlencode(params), "GET")
+    
+    def statuses_retweeted_of_me(self, since_id=None, max_id=None, count=None,
+                               page=None):
+        """
+        Returns the most recent tweets of the authenticated user that have
+        been retweeted by others.
+        """
+        params = get_params_dict(since_id=since_id, max_id=max_id,
+                                 count=count, page=page)
+        
+        return self.request(self.base_api_url+
+                '/statuses/retweeted_of_me.json?%s' % urlencode(params), "GET")
+    
+    #################
+    # Status Methods
+    #################
     
     def statuses_update(self, status, in_reply_to_status_id=None):
         """
@@ -380,12 +467,13 @@ class Client(object):
         A status update with text identical to the
         authenticating user's current status will be ignored to prevent duplicates.
         """
-        params = { "status": status }
-        if in_reply_to_status_id:
-            params['in_reply_to_status_id'] = in_reply_to_status_id
+        params = get_params_dict(status=status,
+                                 in_reply_to_status_id=in_reply_to_status_id)
             
         return self.request(self.base_api_url+'/statuses/update.json', "POST",
                              urlencode(params))
+    
+    ###
     
     def users_show(self, user_id=None, screen_name=None):
         """
@@ -399,11 +487,7 @@ class Client(object):
         if user_id and screen_name:
             raise Exception("A user_id OR screen_name must be provided.")
         
-        params = {}
-        if user_id:
-            params['user_id'] = user_id
-        else:
-            params['screen_name'] = screen_name
+        params = get_params_dict(user_id=user_id, screen_name=screen_name)
         
         return self.request(self.base_api_url+'/users/show.json?%s' %
                             urlencode(params), "GET")
@@ -425,13 +509,10 @@ class Client(object):
         if user_id and screen_name:
             raise Exception("A user_id OR screen_name must be provided.")
         
-        params = {}
-        if user_id:
-            params['user_id'] = user_id
-        else:
-            params['screen_name'] = screen_name
         if follow:
-            params['follow'] = 'true'
+            follow = 'true'
+        params = get_params_dict(user_id=user_id, screen_name=screen_name,
+                                 follow=follow)
         
         return self.request(self.base_api_url+'/friendships/create.json',
                             "POST", urlencode(params))
@@ -449,11 +530,7 @@ class Client(object):
         if user_id and screen_name:
             raise Exception("A user_id OR screen_name must be provided.")
         
-        params = {}
-        if user_id:
-            params['user_id'] = user_id
-        else:
-            params['screen_name'] = screen_name
+        params = get_params_dict(user_id=user_id, screen_name=screen_name)
         
         return self.request(self.base_api_url+'/friendships/destroy.json',
                             "POST", urlencode(params))
@@ -465,13 +542,21 @@ class Client(object):
         
         user_a and user_b can be the user_id or screen_name of the users.
         """
-        params = {
-                  'user_a': user_a,
-                  'user_b': user_b
-                  }
+        params = get_params_dict(user_a=user_a, user_b=user_b)
         
         return self.request(self.base_api_url+'/friendships/exists.json?%s' %
                             urlencode(params), "GET")
+
+
+def get_params_dict(**kwargs):
+    """
+    Utility function that returns a dict with the set parameters (not None)
+    """
+    for key in kwargs.keys():
+        if kwargs[key] == None:
+            del kwargs[key]
+    return kwargs
+
 
 __all__ = ["OAuth", "BasicAuth", "Client"]
 

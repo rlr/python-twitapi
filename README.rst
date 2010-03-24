@@ -81,6 +81,13 @@ The following methods are currently implemented::
 * trends_current
 * trends_daily
 * trends_weekly
+* statuses_home_timeline
+* statuses_friends_timeline
+* statuses_user_timeline
+* statuses_mentions
+* statuses_retweeted_by_me
+* statuses_retweeted_to_me
+* statuses_retweeted_of_me
 * statuses_update
 * users_show
 * friendships_create
