@@ -529,6 +529,84 @@ class Client(object):
         return self.request(self.base_api_url+'/users/show.json?%s' %
                             urlencode(params), "GET")
     
+    def users_lookup(self, user_id=None, screen_name=None):
+        """
+        Return up to 100 users worth of extended information, specified by
+        either ID, screen name, or combination of the two. The author's most
+        recent status (if the authenticating user has permission) will be
+        returned inline.
+        """
+        if user_id and not isinstance(user_id, str) and \
+                                            not isinstance(user_id, int):
+            user_id = ",".join(user_id)
+        if screen_name and not isinstance(screen_name, str):
+            screen_name = ",".join(screen_name)
+        
+        params = get_params_dict(user_id=user_id, screen_name=screen_name)
+        
+        return self.request(self.base_api_url+'/users/lookup.json?%s' %
+                            urlencode(params), "GET")
+    
+    def users_search(self, q, per_page=None, page=None):
+        """
+        Run a search for users similar to Find People button on Twitter.com;
+        the same results returned by people search on Twitter.com will be
+        returned by using this API (about being listed in the People Search).
+        It is only possible to retrieve the first 1000 matches from this API.
+        """
+        params = get_params_dict(q=q, per_page=per_page, page=page)
+        
+        return self.request(self.base_api_url+'/users/search.json?%s' %
+                            urlencode(params), "GET")
+    
+    def users_suggestions(self):
+        """
+        Access to Twitter's suggested user list.  This returns the list of
+        suggested user categories.  The category can be used in the
+        users_suggestions_category method to get the users in that category.
+        """
+        return self.request(self.base_api_url+'/users/suggestions.json', "GET")
+    
+    def users_suggestions_category(self, slug):
+        """
+        Access the users in a given category of the Twitter suggested user
+        list.
+        """
+        return self.request(self.base_api_url+'/users/suggestions/%s.json' %
+                            slug, "GET")
+    
+    def statuses_friends(self, user_id=None, screen_name=None, cursor=None):
+        """
+        Returns a user's friends, each with current status inline. They are
+        ordered by the order in which the user followed them, most recently
+        followed first, 100 at a time.
+        
+        Use the cursor option to access older friends. With no user specified,
+        request defaults to the authenticated user's friends. It's also
+        possible to request another user's friends list via the id,
+        screen_name or user_id parameter.
+        """
+        params = get_params_dict(user_id=user_id, screen_name=screen_name,
+                                 cursor=cursor)
+        
+        return self.request(self.base_api_url+'/statuses/friends.json?%s' %
+                            urlencode(params), "GET")
+    
+    def statuses_followers(self, user_id=None, screen_name=None, cursor=None):
+        """
+        Returns the authenticating user's followers, each with current status
+        inline.  They are ordered by the order in which they followed the user,
+        100 at a time.
+        
+        Use the cursor option to access earlier followers.
+        """
+        params = get_params_dict(user_id=user_id, screen_name=screen_name,
+                                 cursor=cursor)
+        
+        return self.request(self.base_api_url+'/statuses/followers.json?%s' %
+                            urlencode(params), "GET")
+    
+    
     #####################
     # Friendship Methods
     #####################

@@ -94,6 +94,12 @@ The following methods are currently implemented::
 * statuses_retweet
 * statuses_retweets
 * users_show
+* users_lookup
+* users_search
+* users_suggestions
+* users_suggestions_category
+* statuses_friends
+* statuses_followers
 * friendships_create
 * friendships_destroy
 * friendships_exists
