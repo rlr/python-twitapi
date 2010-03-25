@@ -88,7 +88,11 @@ The following methods are currently implemented::
 * statuses_retweeted_by_me
 * statuses_retweeted_to_me
 * statuses_retweeted_of_me
+* statuses_show
 * statuses_update
+* statuses_destroy
+* statuses_retweet
+* statuses_retweets
 * users_show
 * friendships_create
 * friendships_destroy

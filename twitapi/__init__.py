@@ -457,23 +457,60 @@ class Client(object):
     # Status Methods
     #################
     
-    def statuses_update(self, status, in_reply_to_status_id=None):
+    def statuses_show(self, id):
+        """
+        Returns a single status, specified by the id parameter.  The status's
+        author will be returned inline.
+        """
+        return self.request(self.base_api_url+
+                '/statuses/show/%s.format' % id, "GET")
+    
+    
+    
+    def statuses_update(self, status, in_reply_to_status_id=None, lat=None,
+                        long=None, place_id=None, display_coordinates=None):
         """
         Updates the authenticating user's status.
         
-        Requires the status parameter.
-        Request must be a POST.
-        
-        A status update with text identical to the
-        authenticating user's current status will be ignored to prevent duplicates.
+        Note: A status update with text identical to the authenticating
+        user's current status will be ignored to prevent duplicates.
         """
         params = get_params_dict(status=status,
-                                 in_reply_to_status_id=in_reply_to_status_id)
+                                 in_reply_to_status_id=in_reply_to_status_id,
+                                 lat=lat, long=long, place_id=place_id,
+                                 display_coordinates=display_coordinates)
             
         return self.request(self.base_api_url+'/statuses/update.json', "POST",
                              urlencode(params))
     
-    ###
+    def statuses_destroy(self, id):
+        """
+        Destroys the status specified by the required ID parameter.  The
+        authenticating user must be the author of the specified status.
+        """ 
+        return self.request(self.base_api_url+'/statuses/destroy/%s.json' % id,
+                            "POST")
+    
+    def statuses_retweet(self, id):
+        """
+        Retweets a tweet. Requires the id parameter of the tweet you are
+        Returns the original tweet with retweet details embedded.
+        """ 
+        return self.request(self.base_api_url+'/statuses/retweet/%s.json' % id,
+                            "POST")
+    
+    def statuses_retweets(self, id, count=None):
+        """
+        Returns up to 100 of the first retweets of a given tweet.
+        """ 
+        params = get_params_dict(count=count)
+        
+        return self.request(self.base_api_url+'/statuses/retweets/%s.json?%s' %
+                            (id, urlencode(params)), "GET")
+    
+    ###############
+    # User Methods
+    ###############
     
     def users_show(self, user_id=None, screen_name=None):
         """
@@ -491,6 +528,10 @@ class Client(object):
         
         return self.request(self.base_api_url+'/users/show.json?%s' %
                             urlencode(params), "GET")
+    
+    #####################
+    # Friendship Methods
+    #####################
     
     def friendships_create(self, user_id=None, screen_name=None, follow=False):
         """
