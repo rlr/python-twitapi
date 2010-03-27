@@ -108,6 +108,14 @@ The following methods are currently implemented::
 * get_list_statuses
 * get_list_memberships
 * get_list_subscriptions
+* get_list_members
+* add_list_member
+* delete_list_member
+* get_list_members_id
+* get_list_subscribers
+* subscribe_to_list
+* unsubscribe_from_list
+* get_list_subscribers_id
 * friendships_create
 * friendships_destroy
 * friendships_exists

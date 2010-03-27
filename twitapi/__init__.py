@@ -693,6 +693,94 @@ class Client(object):
                             '/%s/lists/subscriptions.json?%s' %
                             (user, urlencode(params)), "GET")
     
+    #######################
+    # List Members Methods
+    #######################
+    def get_list_members(self, user, list_id, cursor=None):
+        """
+        Returns the members of the specified list.
+        """
+        params = get_params_dict(cursor=cursor)
+        
+        return self.request(self.base_api_url+
+                            '/%s/%s/members.json?%s' %
+                            (user, list_id, urlencode(params)), "GET")
+    
+    def add_list_member(self, user, list_id, id):
+        """
+        Add a member to a list.
+        
+        id is the user's user_id or screen_name to add.
+        
+        The authenticated user must own the list to be able to add members to
+        it. Lists are limited to having 500 members.
+        """
+        params = get_params_dict(id=id)
+        
+        return self.request(self.base_api_url+'/%s/%s/members.json' %
+                            (user, list_id), "POST", urlencode(params))
+    
+    def delete_list_member(self, user, list_id, id):
+        """
+        Removes the specified member from the list.
+        
+        id is the user's user_id or screen_name to delete from the list.
+        
+        The authenticated user must be the list's owner to remove members
+        from the list.
+        """
+        params = get_params_dict(id=id)
+        
+        return self.request(self.base_api_url+'/%s/%s/members.json?%s' %
+                            (user, list_id, urlencode(params)), "DELETE")
+    
+    def get_list_members_id(self, user, list_id, id):
+        """
+        Check if a user is a member of the specified list.
+        
+        id is the user_id or screen_name of the user who you want to know
+        is a member or not of the specified list.
+        """
+        return self.request(self.base_api_url+ '/%s/%s/members/%s.json' %
+                            (user, list_id, id), "GET")
+    
+    ###########################
+    # List Subscribers Methods
+    ###########################
+    def get_list_subscribers(self, user, list_id, cursor=None):
+        """
+        Returns the subscribers of the specified list.
+        """
+        params = get_params_dict(cursor=cursor)
+        
+        return self.request(self.base_api_url+
+                            '/%s/%s/subscribers.json?%s' %
+                            (user, list_id, urlencode(params)), "GET")
+    
+    def subscribe_to_list(self, user, list_id):
+        """
+        Make the authenticated user follow the specified list.
+        """
+        return self.request(self.base_api_url+'/%s/%s/subscribers.json' %
+                            (user, list_id), "POST")
+    
+    def unsubscribe_from_list(self, user, list_id):
+        """
+        Unsubscribes the authenticated user form the specified list.
+        """
+        return self.request(self.base_api_url+'/%s/%s/subscribers.json' %
+                            (user, list_id), "DELETE")
+    
+    def get_list_subscribers_id(self, user, list_id, id):
+        """
+        Check if the specified user is a subscriber of the specified list.
+        
+        id is the user_id or screen_name of the user who you want to know
+        is a subscriber or not of the specified list.
+        """
+        return self.request(self.base_api_url+ '/%s/%s/subscribers/%s.json' %
+                            (user, list_id, id), "GET")
+    
     #####################
     # Friendship Methods
     #####################
