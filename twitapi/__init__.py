@@ -606,6 +606,92 @@ class Client(object):
         return self.request(self.base_api_url+'/statuses/followers.json?%s' %
                             urlencode(params), "GET")
     
+    ###############
+    # List Methods
+    ###############
+    
+    def create_list(self, user, name, mode=None, description=None):
+        """
+        Creates a new list for the authenticated user.
+        
+        Accounts are limited to 20 lists.
+        """
+        params = get_params_dict(name=name, mode=mode,
+                                 description=description)
+        
+        return self.request(self.base_api_url+'/%s/lists.json' % user,
+                            "POST", urlencode(params))
+    
+    def update_list(self, user, id, name=None, mode=None, description=None):
+        """
+        Updates the specified list.
+        """
+        params = get_params_dict(name=name, mode=mode,
+                                 description=description)
+        
+        return self.request(self.base_api_url+'/%s/lists/%s.json' %
+                            (user, id), "POST", urlencode(params))
+    
+    def get_lists(self, user, cursor=None):
+        """
+        List the lists of the specified user.
+        
+        Private lists will be included if the authenticated users is the same
+        as the user who'se lists are being returned.
+        """
+        params = get_params_dict(cursor=cursor)
+        
+        return self.request(self.base_api_url+'/%s/lists.json?%s' %
+                            (user, urlencode(params)), "GET")
+    
+    def get_list(self, user, id):
+        """
+        Show the specified list.
+        
+        Private lists will only be shown if the authenticated user owns the
+        specified list.
+        """
+        return self.request(self.base_api_url+'/%s/lists/%s.json' %
+                            (user, id), "GET")
+    
+    def delete_list(self, user, id):
+        """
+        Deletes the specified list. Must be owned by the authenticated user.
+        """
+        return self.request(self.base_api_url+'/%s/lists/%s.json' %
+                            (user, id), "DELETE")
+    
+    def get_list_statuses(self, user, list_id, since_id=None, max_id=None,
+                          per_page=None, page=None):
+        """
+        Show tweet timeline for members of the specified list.
+        """
+        params = get_params_dict(since_id=since_id, max_id=max_id,
+                                 per_page=per_page, page=page)
+        
+        return self.request(self.base_api_url+
+                            '/%s/lists/%s/statuses.json' %
+                            (user, list_id), "GET")
+    
+    def get_list_memberships(self, user, cursor=None):
+        """
+        List the lists the specified user has been added to.
+        """
+        params = get_params_dict(cursor=cursor)
+        
+        return self.request(self.base_api_url+
+                            '/%s/lists/memberships.json?%s' %
+                            (user, urlencode(params)), "GET")
+    
+    def get_list_subscriptions(self, user, cursor=None):
+        """
+        List the lists the specified user follows.
+        """
+        params = get_params_dict(cursor=cursor)
+        
+        return self.request(self.base_api_url+
+                            '/%s/lists/subscriptions.json?%s' %
+                            (user, urlencode(params)), "GET")
     
     #####################
     # Friendship Methods

@@ -100,6 +100,14 @@ The following methods are currently implemented::
 * users_suggestions_category
 * statuses_friends
 * statuses_followers
+* create_list
+* update_list
+* get_lists
+* get_list
+* delete_list
+* get_list_statuses
+* get_list_memberships
+* get_list_subscriptions
 * friendships_create
 * friendships_destroy
 * friendships_exists
