@@ -930,6 +930,21 @@ class Client(object):
         
         return self.request(self.base_api_url+'/followers/ids.json?%s' %
                             urlencode(params), "GET")
+        
+    ##################
+    # Account Methods
+    ##################
+    def rate_limit_status(self):
+        """
+        Returns the remaining number of API requests available to the
+        requesting user before the API limit is reached for the current hour.
+        
+        If authentication credentials are provided, the rate limit status for
+        the authenticating user is returned.  Otherwise, the rate limit status
+        for the requester's IP address is returned.
+        """
+        return self.request(self.base_api_url+
+                            '/account/rate_limit_status.json', "GET")
 
 
 def get_params_dict(**kwargs):

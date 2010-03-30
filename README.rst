@@ -125,6 +125,7 @@ The following methods are currently implemented::
 * friendships_exists
 * friends_ids
 * followers_ids
+* rate_limit_status
 
 The rest are coming. In the mean time, you can call the request method, passing in
 any url (method, body, headers are optional parameters). For example:
