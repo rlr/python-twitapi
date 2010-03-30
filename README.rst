@@ -116,6 +116,10 @@ The following methods are currently implemented::
 * subscribe_to_list
 * unsubscribe_from_list
 * get_list_subscribers_id
+* direct_messages
+* direct_messages_sent
+* direct_messages_new
+* direct_messages_destroy
 * friendships_create
 * friendships_destroy
 * friendships_exists

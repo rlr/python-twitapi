@@ -696,6 +696,7 @@ class Client(object):
     #######################
     # List Members Methods
     #######################
+    
     def get_list_members(self, user, list_id, cursor=None):
         """
         Returns the members of the specified list.
@@ -747,6 +748,7 @@ class Client(object):
     ###########################
     # List Subscribers Methods
     ###########################
+    
     def get_list_subscribers(self, user, list_id, cursor=None):
         """
         Returns the subscribers of the specified list.
@@ -780,6 +782,58 @@ class Client(object):
         """
         return self.request(self.base_api_url+ '/%s/%s/subscribers/%s.json' %
                             (user, list_id, id), "GET")
+    
+    #########################
+    # Direct Message Methods
+    #########################
+    
+    def direct_messages(self, since_id=None, max_id=None, count=None,
+                               page=None):
+        """
+        Returns a list of the most recent direct messages sent to the
+        authenticating user. Includes detailed information about the
+        sending and recipient users.
+        """
+        params = get_params_dict(since_id=since_id, max_id=max_id,
+                                 count=count, page=page)
+        
+        return self.request(self.base_api_url+'/direct_messages.json', "GET")
+    
+    def direct_messages_sent(self, since_id=None, max_id=None, count=None,
+                               page=None):
+        """
+        Returns a list of the most recent direct messages by the
+        authenticating user. Includes detailed information about the
+        sending and recipient users.
+        """
+        params = get_params_dict(since_id=since_id, max_id=max_id,
+                                 count=count, page=page)
+        
+        return self.request(self.base_api_url+'/direct_messages/sent.json',
+                            "GET")
+    
+    def direct_messages_new(self, user, text):
+        """
+        Sends a new direct message to the specified user from the
+        authenticating user.
+        
+        Returns the sent message in the requested format when successful.
+        """
+        params = get_params_dict(user=user, text=text)
+        
+        return self.request(self.base_api_url+'/direct_messages/new.json',
+                            "POST", urlencode(params))
+    
+    def direct_messages_destroy(self, id):
+        """
+        Destroys the direct message specified in the required ID parameter.
+        
+        The authenticating user must be the recipient of the specified
+        direct message.
+        """
+        return self.request(self.base_api_url+
+                            '/direct_messages/destroy/%s.json' % id, "DELETE")
+    
     
     #####################
     # Friendship Methods
@@ -839,6 +893,10 @@ class Client(object):
         
         return self.request(self.base_api_url+'/friendships/exists.json?%s' %
                             urlencode(params), "GET")
+    
+    ##
+    #
+    ##
 
 
 def get_params_dict(**kwargs):
