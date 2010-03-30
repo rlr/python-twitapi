@@ -123,6 +123,8 @@ The following methods are currently implemented::
 * friendships_create
 * friendships_destroy
 * friendships_exists
+* friends_ids
+* followers_ids
 
 The rest are coming. In the mean time, you can call the request method, passing in
 any url (method, body, headers are optional parameters). For example:

@@ -894,9 +894,42 @@ class Client(object):
         return self.request(self.base_api_url+'/friendships/exists.json?%s' %
                             urlencode(params), "GET")
     
-    ##
-    #
-    ##
+    #######################
+    # Social Graph Methods
+    #######################
+    def friends_ids(self, user_id=None, screen_name=None, cursor=None):
+        """
+        Returns an array of numeric IDs for every user the specified user
+        is following.
+        """
+        if not user_id and not screen_name:
+            raise Exception("A user_id or screen_name must be provided.")
+        
+        if user_id and screen_name:
+            raise Exception("A user_id OR screen_name must be provided.")
+        
+        params = get_params_dict(user_id=user_id, screen_name=screen_name,
+                                 cursor=cursor)
+        
+        return self.request(self.base_api_url+'/friends/ids.json?%s' %
+                            urlencode(params), "GET")
+    
+    def followers_ids(self, user_id=None, screen_name=None, cursor=None):
+        """
+        Returns an array of numeric IDs for every user following the
+        specified user.
+        """
+        if not user_id and not screen_name:
+            raise Exception("A user_id or screen_name must be provided.")
+        
+        if user_id and screen_name:
+            raise Exception("A user_id OR screen_name must be provided.")
+        
+        params = get_params_dict(user_id=user_id, screen_name=screen_name,
+                                 cursor=cursor)
+        
+        return self.request(self.base_api_url+'/followers/ids.json?%s' %
+                            urlencode(params), "GET")
 
 
 def get_params_dict(**kwargs):
