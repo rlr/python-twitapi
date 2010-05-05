@@ -240,7 +240,7 @@ class Client(object):
         try:
         	decoded = json.loads(content)
         	content = decoded
-        except json.decoder.JSONDecodeError:
+        except:
             pass
             
         return resp, content
